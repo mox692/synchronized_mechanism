@@ -17,7 +17,7 @@ __sync_fetch_and_add(&num, 1);
      f0 83 45 f4 01          lock addl $0x1,-0xc(%rbp)
 ```
 このadd命令は同じタイミングで複数コアが実行するようなことはない
-### compare and swap (CAS)
+### cmpxchgとcompare and swap
 参考: [intel SDM](https://www.intel.co.jp/content/dam/www/public/ijkk/jp/ja/documents/developer/IA32_Arh_Dev_Man_Vol2A_i.pdf)
 * そのまま引用
     * *（オペランドのサイズにしたがって）AL、AX、または EAX レジスタの値を第 1 オペ
@@ -40,7 +40,7 @@ f0 0f b1 15 91 2e 00    lock cmpxchg %edx,0x2e91(%rip)
 ```
 
 
-### test and set
+### xchgとtest and set
 参考: [X86アセンブラ/データ転送命令](https://ja.wikibooks.org/wiki/X86%E3%82%A2%E3%82%BB%E3%83%B3%E3%83%96%E3%83%A9/%E3%83%87%E3%83%BC%E3%82%BF%E8%BB%A2%E9%80%81%E5%91%BD%E4%BB%A4)
 ```c
 __sync_lock_test_and_set(&a, 3);
@@ -56,7 +56,7 @@ xchg命令は自動的にlockプレフィクスがついた時と同じ挙動に
 * 上位レイヤで提供されてるセマフォ、mutex, lockなどの排他制御の仕組みは、つまるところ下記に代表されるようなアルゴリズムなどを使って実現されてることが多い
   * cas
   * tas
-* 上記を実現するための「ハードウェアが提供する命令」としては
+* そして上記を実現するための「ハードウェアが提供する命令」としては、x86では
   * xchg
   * cmpxchg
   * lockプレフィクス  
